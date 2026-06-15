@@ -12,7 +12,7 @@ export default class UserService {
         }
     }
 
-    public async updateProfile(formData:ProfileFormData):Promise<ProfileFormData> {
+    public async updateProfile(formData:Partial<ProfileFormData>):Promise<ProfileFormData> {
         try {
             const response = await api.patch("/users/update", formData);
             return response.data as ProfileFormData;

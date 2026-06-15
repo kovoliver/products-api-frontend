@@ -1,5 +1,6 @@
 import type { ObjectSchema } from 'joi';
 import type { ChangeEvent, Dispatch, SetStateAction } from 'react';
+import isEqual from "fast-deep-equal";
 
 export function getValueByKey(object: Record<string, any>, key: string, context: string): string {
     if (!(key in object)) {
@@ -107,4 +108,16 @@ export function normalizeMessages(msg: string | string[] | Record<string, any> |
     };
 
     return normalizeOne(msg);
+}
+
+export function onlyChangedKeys<T extends Record<string, any>>(a: T, b: T): Partial<T> {
+    const result: Partial<T> = {};
+
+    for (const key of Object.keys(b) as (keyof T)[]) {
+         if (!isEqual(a[key], b[key])) {
+            result[key] = b[key];
+        }
+    }
+
+    return result;
 }
