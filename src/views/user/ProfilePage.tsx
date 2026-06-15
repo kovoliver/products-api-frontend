@@ -1,40 +1,99 @@
+import { useState } from "react";
 import { useUserStore } from "../../core/stores/userStore";
+import type { ProfileFormData } from "../../core/types";
+import { BoxSecondary } from "../../components/ui/Boxes";
+import { InputMain } from "../../components/ui/Inputs";
+import { ButtonMain } from "../../components/ui/Buttons";
+import UserService from "../../app/UserService";
+import { useNotificationStore } from "../../core/stores/notificationStore";
+import { handleChange } from "../../core/utils";
+import { profileValidationScheme } from "../../core/ValidationSchemes";
 
 export default function ProfilePage() {
-    const user = useUserStore((state)=>state.user);
+    const user = useUserStore((state) => state.user);
+    const submitting = useUserStore(state=>state.submitting);
+    const setProfileData = useUserStore(state=>state.setProfileData);
+    const setMessage = useNotificationStore(state=>state.setMessage);
+    const setMessageType = useNotificationStore(state=>state.setMessageType);
 
-    if(!user) {
+    const us:UserService = new UserService();
+    const [formData, setFormData] = useState<ProfileFormData>({
+        userName: user?.userName || "",
+        firstName: user?.firstName || "",
+        lastName: user?.lastName || ""
+    });
+
+    const [errors, setErrors] = useState<Record<keyof ProfileFormData, string|null>>({
+        userName: null,
+        firstName: null,
+        lastName: null
+    });
+
+    if (!user) {
         return null;
     }
 
+    const updateProfile = async ()=> {
+        try {
+            const fd = await us.updateProfile(formData);
+            setFormData(fd);
+            setProfileData(fd);
+
+            setMessage("You have successfully updated your profile!");
+            setMessageType("success");
+        } catch(err) {
+            setMessage(err);
+            setMessageType("danger");
+        }
+    };
+
     return (
-        <div className="max-w-md mx-auto bg-white rounded-2xl shadow-md overflow-hidden border border-gray-100">
-            <div className="bg-main/10 p-6 text-center border-b border-gray-100">
-                <h1 className="text-2xl font-bold text-main">Profil adatok</h1>
-                <p className="text-sm text-gray-500 mt-1">@{user.userName}</p>
-            </div>
+        <>
+            <form onSubmit={e=>{e.preventDefault(); updateProfile()}}>
+                <h1 className="text-3xl my-3 text-center text-main">Update profile</h1>
 
-            <div className="p-6 space-y-4">
-                <div className="flex flex-col sm:flex-row justify-between border-b border-gray-50 pb-2">
-                    <span className="text-sm font-medium text-gray-400 uppercase tracking-wider">Felhasználónév</span>
-                    <span className="text-gray-800 font-semibold">{user.userName}</span>
-                </div>
+                <BoxSecondary>
+                    <b className="block text-main mb-1">User name</b>
+                    <b className="block text-danger">{errors.userName||""}</b>
 
-                <div className="flex flex-col sm:flex-row justify-between border-b border-gray-50 pb-2">
-                    <span className="text-sm font-medium text-gray-400 uppercase tracking-wider">E-mail cím</span>
-                    <span className="text-gray-800 font-medium">{user.email}</span>
-                </div>
+                    <InputMain
+                        type="text" value={formData.userName}
+                        placeholder="user name"
+                        size="sm" name="userName"
+                        onChange={(e:any)=>handleChange(e, setFormData, setErrors, profileValidationScheme)}
+                    />
 
-                <div className="flex flex-col sm:flex-row justify-between border-b border-gray-50 pb-2">
-                    <span className="text-sm font-medium text-gray-400 uppercase tracking-wider">Vezetéknév</span>
-                    <span className="text-gray-800">{user.lastName}</span>
-                </div>
+                    <b className="block text-main mb-1">First name</b>
+                    <b className="block text-danger">{errors.firstName||""}</b>
 
-                <div className="flex flex-col sm:flex-row justify-between border-b border-gray-50 pb-2">
-                    <span className="text-sm font-medium text-gray-400 uppercase tracking-wider">Keresztnév</span>
-                    <span className="text-gray-800">{user.firstName}</span>
-                </div>
-            </div>
-        </div>
+                    <InputMain
+                        type="text" value={formData.firstName}
+                        placeholder="first name"
+                        size="sm" name="firstName"
+                        onChange={(e:any)=>handleChange(e, setFormData, setErrors, profileValidationScheme)}
+                    />
+
+                    <b className="block text-main mb-1">Last name</b>
+                    <b className="block text-danger">{errors.lastName||""}</b>
+
+                    <InputMain
+                        type="text" value={formData.lastName}
+                        placeholder="last name"
+                        size="sm" name="lastName"
+                        onChange={(e:any)=>handleChange(e, setFormData, setErrors, profileValidationScheme)}
+                    />
+
+                    <div className="mt-3">
+                        <ButtonMain
+                            text="Save"
+                            icon="save"
+                            isLoading={submitting}
+                            disabled={submitting}
+                            customClasses={['d-block']}
+                        />
+                    </div>
+                </BoxSecondary>
+            </form>
+        </>
     );
 }

@@ -1,5 +1,5 @@
 import type { IconProp } from "@fortawesome/fontawesome-svg-core";
-import type { AuthResponse } from "./types";
+import type { AuthResponse, ProfileFormData } from "./types";
 import type { ThemeColorType } from "./theme";
 
 export interface UserStoreType {
@@ -9,6 +9,7 @@ export interface UserStoreType {
     fetching:boolean;
     submitting:boolean;
     login: (userData: AuthResponse) => void;
+    setProfileData: (profileData:ProfileFormData)=>void;
     logout: () => void;
     setAuthLoading: (loading: boolean) => void;
     setFetching: (loading: boolean) => void;

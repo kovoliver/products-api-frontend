@@ -18,16 +18,16 @@ export default function ProductPage() {
     const {id} = useParams();
     
     const [productData, setProductData] = useState<ProductFormData>({
-        brand: "",
+        brandId: 1,
         title: "",
         description: "",
         price: 0,
-        discountPercentage: 0,
         stock: 0,
+        discountPercentage: 0,
         tags: []
     });
     const [errors, setErrors] = useState<Record<keyof ProductFormData,any>>({
-        brand: "",
+        brandId: 0,
         title: "",
         description: "",
         price: "",
@@ -54,7 +54,7 @@ export default function ProductPage() {
             setMessage(`You have successfully ${isUpdate ? 'updated' : 'added'} your product!`);
             setMessageType("success");
             
-            if(!isUpdate) navigate(`/product/${product.id}`);
+            if(!isUpdate) navigate(`/product/${product.productId}`);
         } catch (err: any) {
             setMessage(err);
             setMessageType("danger");
@@ -90,11 +90,11 @@ export default function ProductPage() {
 
                     <div>
                         <b className="block text-main mb-1">Brand</b>
-                        <b className="block text-danger">{errors.brand||""}</b>
+                        <b className="block text-danger">{errors.brandId||""}</b>
 
                         <InputMain
                             type="text" customClasses={['w-[90%]']} placeholder="Product brand"
-                            value={productData.brand} name="brand"
+                            value={productData.brandId} name="brand"
                             onChange={(e:any)=>handleChange(e, setProductData, setErrors, productValidationSchema)}
                         />
                     </div>
@@ -162,7 +162,7 @@ export default function ProductPage() {
                         <b className="block text-main mb-1">Tags</b>
                         <b className="block text-danger">{errors.tags||""}</b>
 
-                        <TagInput
+                        {/* <TagInput
                             tags={productData?.tags}
                             addTag={(tag: string) =>
                                 setProductData(prev => ({ ...prev, tags: [...prev.tags, tag] }))
@@ -171,7 +171,7 @@ export default function ProductPage() {
                                 setProductData(prev => ({ ...prev, tags: prev.tags.filter((_, i) => i !== index) }))
                             }
                             placeholder="comma or enter"
-                        />
+                        /> */}
                     </div>
                 </BoxSecondary>
 

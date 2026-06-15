@@ -1,5 +1,5 @@
 import { useState } from "react";
-import AuthService from "../../app/AuthService";
+import UserService from "../../app/UserService";
 import { InputMain } from "../../components/ui/Inputs";
 import { BoxSecondary } from "../../components/ui/Boxes";
 import { ButtonMain } from "../../components/ui/Buttons";
@@ -9,7 +9,7 @@ import { useUserStore } from "../../core/stores/userStore";
 import { useNotificationStore } from "../../core/stores/notificationStore";
 
 export default function Login() {
-    const as: AuthService = new AuthService();
+    const us: UserService = new UserService();
     const [email, setEmail] = useState<string>("kovacs.oliver1989@gmail.com");
     const [password, setPassword] = useState<string>("password");
     const navigate = useNavigate();
@@ -22,7 +22,7 @@ export default function Login() {
         e.preventDefault();
 
         try {
-            const response = await as.login({
+            const response = await us.login({
                 email, password
             });
 

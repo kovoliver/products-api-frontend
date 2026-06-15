@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import type { UserStoreType } from "../interfaces";
-import type { AuthResponse } from "../types";
+import type { AuthResponse, ProfileFormData } from "../types";
 import api from "../api";
 
 export const useUserStore = create<UserStoreType>((set, get) => ({
@@ -16,6 +16,17 @@ export const useUserStore = create<UserStoreType>((set, get) => ({
             isAuthenticated: true,
             authLoading: false,
         });
+    },
+
+    setProfileData:(profileData:ProfileFormData) => {
+        set((state) => ({
+            user: state.user
+                ? {
+                    ...state.user,
+                    ...profileData,
+                }
+                : null
+        }));
     },
 
     logout: async () => {

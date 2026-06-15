@@ -13,7 +13,7 @@ export type Image = {
 
 export type Product = {
     productId: number;
-    brandId: string;
+    brandId: number;
     title: string;
     description: string;
     price: number;
@@ -24,7 +24,7 @@ export type Product = {
 }
 
 export type ProductFormData = Omit<
-    Product, "productId"
+    Product, "productId"|"images"
 >;
 
 export type ProductResponse = {
@@ -42,7 +42,7 @@ export type AuthResponse = {
     email: string;
 };
 
-export type UserFormData = Omit<AuthResponse, "userId">;
+export type ProfileFormData = Omit<AuthResponse, "userId"|"email">;
 
 export type UserLogin = {
     email: string;
