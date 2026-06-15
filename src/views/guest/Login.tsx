@@ -11,7 +11,7 @@ import { useNotificationStore } from "../../core/stores/notificationStore";
 export default function Login() {
     const as: AuthService = new AuthService();
     const [email, setEmail] = useState<string>("kovacs.oliver1989@gmail.com");
-    const [password, setPassword] = useState<string>("jelszó");
+    const [password, setPassword] = useState<string>("password");
     const navigate = useNavigate();
     const loginState = useUserStore((state)=>state.login);
     const setMessage = useNotificationStore((state)=>state.setMessage);
@@ -51,7 +51,7 @@ export default function Login() {
             
             <BoxSecondary customClasses={['max-w-md mx-auto text-center']}>
                 <form>
-                    <b className="block text-main mb-2">Username</b>
+                    <b className="block text-main mb-2">Email</b>
 
                     <InputMain
                         placeholder="userName"
