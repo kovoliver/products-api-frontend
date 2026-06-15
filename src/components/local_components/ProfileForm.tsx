@@ -88,6 +88,7 @@ export default function ProfileForm({ initFormData, submitting }: { initFormData
                         isLoading={submitting}
                         disabled={submitting}
                         customClasses={['d-block']}
+                        size="sm"
                     />
                 </div>
             </BoxSecondary>
