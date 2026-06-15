@@ -8,7 +8,7 @@ export default function GuestLayout() {
     const user = useUserStore((state) => state.user);
 
     if(isAuthenticated && user) {
-        <Navigate to="/user/profile"/>
+        return <Navigate to="/user/profile" replace/>
     }
 
     return (
