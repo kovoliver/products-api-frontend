@@ -25,17 +25,9 @@ export default function Login() {
             const response = await us.login({
                 email, password
             });
-
-            const userData:AuthResponse = {
-                userId:response.userId,
-                userName:response.userName,
-                email:response.email,
-                firstName:response.firstName,
-                lastName:response.lastName
-            };
-
+            
             loginState(
-                userData
+                response
             );
             
             navigate("/user/profile");
