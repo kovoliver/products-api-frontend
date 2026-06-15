@@ -3,7 +3,6 @@ import UserService from "../../app/UserService";
 import { InputMain } from "../../components/ui/Inputs";
 import { BoxSecondary } from "../../components/ui/Boxes";
 import { ButtonMain } from "../../components/ui/Buttons";
-import type { AuthResponse } from "../../core/types";
 import { useNavigate } from "react-router-dom";
 import { useUserStore } from "../../core/stores/userStore";
 import { useNotificationStore } from "../../core/stores/notificationStore";
@@ -25,7 +24,7 @@ export default function Login() {
             const response = await us.login({
                 email, password
             });
-            
+
             loginState(
                 response
             );
