@@ -2,6 +2,7 @@ import { create } from "zustand";
 import type { UserStoreType } from "../interfaces";
 import type { AuthResponse, ProfileFormData } from "../types";
 import api from "../api";
+import type { AxiosError } from "axios";
 
 export const useUserStore = create<UserStoreType>((set, get) => ({
     user: null,
@@ -18,7 +19,7 @@ export const useUserStore = create<UserStoreType>((set, get) => ({
         });
     },
 
-    setProfileData:(profileData:ProfileFormData) => {
+    setProfileData: (profileData: ProfileFormData) => {
         set((state) => ({
             user: state.user
                 ? {
@@ -37,11 +38,18 @@ export const useUserStore = create<UserStoreType>((set, get) => ({
                 user: null,
                 isAuthenticated: false,
             });
-        } catch(err) {
+        } catch (err) {
             console.error("Logout was unsuccessful:", err);
         } finally {
             set({ authLoading: false });
         }
+    },
+
+    softLogout: () => {
+        set({
+            user: null,
+            isAuthenticated: false,
+        });
     },
 
     verifyUser: async () => {
@@ -60,12 +68,16 @@ export const useUserStore = create<UserStoreType>((set, get) => ({
                 user: userData,
                 isAuthenticated: true,
             });
-        } catch (err) {
-            console.error("Re-authentication was unsuccessful:", err);
-            
-            if(!get().isAuthenticated) {
-                get().logout();
+        } catch (err:any) {
+            const error = err as AxiosError;
+            const status = error.response?.status;
+
+            if (status === 412) {
+                console.error("2FA is required or in progress!");
+                return;
             }
+
+            get().softLogout();
         } finally {
             set({ authLoading: false });
         }

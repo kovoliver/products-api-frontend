@@ -11,6 +11,7 @@ export interface UserStoreType {
     login: (userData: AuthResponse) => void;
     setProfileData: (profileData:ProfileFormData)=>void;
     logout: () => void;
+    softLogout:()=>void;
     setAuthLoading: (loading: boolean) => void;
     setFetching: (loading: boolean) => void;
     setSubmitting: (loading: boolean) => void;
