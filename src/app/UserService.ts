@@ -1,12 +1,12 @@
 import api from "../core/api";
-import type { AuthResponse, ProfileFormData, UserLogin } from "../core/types";
+import type { ProfileFormData, UserLogin } from "../core/types";
 import { apiCatch } from "../core/utils";
 
 export default class UserService {
-    public async login(user:UserLogin):Promise<AuthResponse> {
+    public async login(user:UserLogin):Promise<{message:string}> {
         try {
             const response = await api.post("/auth/login", user);
-            return response.data as AuthResponse;
+            return response.data;
         } catch(err:unknown) {
             throw apiCatch(err);
         }

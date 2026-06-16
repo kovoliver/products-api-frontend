@@ -3,7 +3,7 @@ import Cookies from "js-cookie";
 import { useUserStore } from "./stores/userStore";
 
 const api: AxiosInstance = axios.create({
-    baseURL: 'http://localhost:3000',
+    baseURL: 'http://localhost:3000/api',
     withCredentials: true,
     headers: {
         'Content-Type': 'application/json',

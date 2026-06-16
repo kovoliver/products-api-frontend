@@ -24,6 +24,7 @@ import ProductPage from './views/user/ProductPage';
 import { useUserStore } from './core/stores/userStore';
 import { useEffect } from 'react';
 import NotFound from './views/guest/NotFound';
+import TwoFactorLoginPage from './views/guest/TwoFactorLoginPage';
 
 library.add(
     faPlus, faTrash, faCheck,
@@ -48,6 +49,7 @@ function App() {
             <Routes>
                 <Route element={<GuestLayout />}>
                     <Route path="/" element={<Login />} />
+                    <Route path="/auth/2fa/:token" element={<TwoFactorLoginPage />} />
                 </Route>
 
                 <Route element={<DashboardLayout />}>

@@ -62,7 +62,10 @@ export const useUserStore = create<UserStoreType>((set, get) => ({
             });
         } catch (err) {
             console.error("Re-authentication was unsuccessful:", err);
-            get().logout();
+            
+            if(!get().isAuthenticated) {
+                get().logout();
+            }
         } finally {
             set({ authLoading: false });
         }

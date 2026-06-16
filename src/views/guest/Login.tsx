@@ -3,7 +3,6 @@ import UserService from "../../app/UserService";
 import { InputMain } from "../../components/ui/Inputs";
 import { BoxSecondary } from "../../components/ui/Boxes";
 import { ButtonMain } from "../../components/ui/Buttons";
-import { useNavigate } from "react-router-dom";
 import { useUserStore } from "../../core/stores/userStore";
 import { useNotificationStore } from "../../core/stores/notificationStore";
 
@@ -11,8 +10,6 @@ export default function Login() {
     const us: UserService = new UserService();
     const [email, setEmail] = useState<string>("kovacs.oliver1989@gmail.com");
     const [password, setPassword] = useState<string>("password");
-    const navigate = useNavigate();
-    const loginState = useUserStore((state)=>state.login);
     const setMessage = useNotificationStore((state)=>state.setMessage);
     const setMessageType = useNotificationStore((state)=>state.setMessageType);
     const submitting = useUserStore(state=>state.submitting);
@@ -25,11 +22,8 @@ export default function Login() {
                 email, password
             });
 
-            loginState(
-                response
-            );
-            
-            navigate("/user/profile");
+            setMessageType("success");
+            setMessage(response.message);
         } catch (err:any) {
             setMessage(err);
             setMessageType("danger");
