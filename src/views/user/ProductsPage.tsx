@@ -115,7 +115,7 @@ export default function ProductsPage() {
         try {
             const response = await ps.deleteProduct(id);
             if (response.isDeleted)
-                setProducts(prev => prev.filter(p => p.id !== id));
+                setProducts(prev => prev.filter(p => p.productId !== id));
             else throw "Something went wrong. Please, try again later!";
         } catch (err: any) {
             setMessage(err);
@@ -159,18 +159,18 @@ export default function ProductsPage() {
             }
 
             <div className="grid grid-cols-12">
-                {products.map((p, index) => (
-                    <div key={`${p.id}-${index}`} className="p-2 lg:col-span-4 md:col-span-6 sm:col-span-12 col-span-12 text-center">
+                {products?.map((p, index) => (
+                    <div key={`${p.productId}-${index}`} className="p-2 lg:col-span-4 md:col-span-6 sm:col-span-12 col-span-12 text-center">
                         <BoxAccent>
                             <b className="block font-bold">{p.title}</b>
-                            <Link to={`/user/product/${p.id}`}>
+                            <Link to={`/user/product/${p.productId}`}>
                                 <img className="py-3 mx-auto bg-white rounded my-3 w-full" 
-                                src={p.thumbnail} alt={p.title} />
+                                src={p.images[0]?.path} alt={p.title} />
                             </Link>
 
                             <div className="grid grid-cols-2">
                                 <div className="col-span-1 flex justify-center">
-                                    <Link to={`/user/product/${p.id}`}>
+                                    <Link to={`/user/product/${p.productId}`}>
                                         <ButtonMain
                                             text="Open"
                                             icon="arrow-up-right-from-square"
@@ -183,7 +183,7 @@ export default function ProductsPage() {
                                         text="Delete"
                                         icon="trash"
                                         size="sm"
-                                        onClick={() => deleteConfirm(p.id, p.title)}
+                                        onClick={() => deleteConfirm(p.productId, p.title)}
                                         disabled={submitting}
                                     />
                                 </div>
@@ -193,7 +193,8 @@ export default function ProductsPage() {
                 ))}
             </div>
 
-            <div ref={observerRef} className="h-10 w-full flex items-center justify-center">
+            <div ref={observerRef} style={{display:(products?.length > 0 ? 'block' : 'none')}} 
+            className="h-10 w-full flex items-center justify-center">
                 {loading && <div className="py-4 font-bold">Loading products...</div>}
                 {!hasMore && products.length > 0 && <div className="py-4 text-gray-500">You have loaded all elements.</div>}
             </div>

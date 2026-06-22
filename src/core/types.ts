@@ -8,7 +8,7 @@ export type Image = {
     productId:number;
     isThumbnail:number;
     sortOrder:number;
-    path:number;
+    path:string;
 }
 
 export type Product = {
