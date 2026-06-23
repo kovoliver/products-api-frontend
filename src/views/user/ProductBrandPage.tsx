@@ -1,9 +1,9 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { BoxSecondary } from "../../components/ui/Boxes";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { ProductBrandFormData } from "../../core/types";
 import { InputMain } from "../../components/ui/Inputs";
-import { handleChange, validateField, validateForm } from "../../core/utils";
+import { handleChange, validateForm } from "../../core/utils";
 import { brandValidationScheme } from "../../core/ValidationSchemes";
 import { ButtonMain } from "../../components/ui/Buttons";
 import ProductBrandService from "../../app/ProductBrandService";
@@ -49,6 +49,27 @@ export default function ProductBrandPage() {
             setMessageType("danger");
         }
     };
+
+    const getBrandById = async ()=> {
+        if(!brandId) return;
+
+        try {
+            const response = await pbs.getBrandById(parseInt(brandId));
+            
+            setBrandData({
+                name:response.name,
+                description:response.description
+            });
+        } catch (err: any) {
+            setMessage(err);
+            setMessageType("danger");
+        }
+    };
+
+
+    useEffect(()=> {
+        getBrandById();
+    }, []);
 
     return (
         <>

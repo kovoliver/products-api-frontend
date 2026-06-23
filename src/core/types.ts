@@ -25,6 +25,8 @@ export type ProductBrand = {
     updatedAt: string;
 }
 
+export type ProductBrandResponse = Omit<ProductBrand, "brandId">;
+
 export type BrandSearchParams = Pagination & {
     name:string;
 }

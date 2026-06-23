@@ -135,3 +135,24 @@ export function useDebounce(val:string, delay:number = 500) {
 
     return dKeyword;
 }
+
+export function toLocalDateString(
+    isoDate: string | null | undefined
+): string {
+    if (!isoDate) {
+        return "";
+    }
+
+    return new Date(isoDate).toLocaleDateString();
+}
+
+export function toLocaleDateTimeString(
+    isoDate: string | null | undefined
+): string {
+    if (!isoDate) return "";
+
+    const date = new Date(isoDate);
+    if (isNaN(date.getTime())) return "";
+
+    return date.toLocaleString("hu-HU");
+}

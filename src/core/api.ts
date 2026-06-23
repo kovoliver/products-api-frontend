@@ -36,7 +36,6 @@ api.interceptors.request.use(
         handleLoadingState(config.method, true);
 
         config.headers['x-csrf-token'] = useUserStore.getState().csrfToken;
-        console.log(config.headers['x-csrf-token']);
         
         return config;
     },

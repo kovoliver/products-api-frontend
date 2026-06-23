@@ -1,11 +1,12 @@
 import api from "../core/api";
-import type { ProductBrand, ProductBrandFormData, ProductBrandsResponse } from "../core/types";
+import type { BrandSearchParams, ProductBrand, ProductBrandFormData, ProductBrandsResponse } from "../core/types";
 import { apiCatch } from "../core/utils";
 
 export default class ProductBrandService {
-    public async search():Promise<ProductBrandsResponse> {
+    public async search(params:BrandSearchParams):Promise<ProductBrandsResponse> {
         try {
-            const response = await api.get("/product-brands");
+            const queryString = new URLSearchParams(params as Record<string, any>).toString();
+            const response = await api.get("/product-brands?" + queryString);
             return response.data as ProductBrandsResponse;
         } catch(err:unknown) {
             throw apiCatch(err);
@@ -34,7 +35,7 @@ export default class ProductBrandService {
 
     public async updateBrand(brandId:number, formData:ProductBrandFormData):Promise<ProductBrand> {
         try {
-            const response = await api.post(`/product-brands/${brandId}`, {
+            const response = await api.patch(`/product-brands/${brandId}`, {
                 data:formData
             });
 

@@ -26,7 +26,7 @@ import { useEffect } from 'react';
 import NotFound from './views/guest/NotFound';
 import TwoFactorLoginPage from './views/guest/TwoFactorLoginPage';
 import ProductBrandsPage from './views/user/ProductBrandsPage';
-import ProductBrandPage from './views/user/ProdutBrandPage';
+import ProductBrandPage from './views/user/ProductBrandPage';
 
 library.add(
     faPlus, faTrash, faCheck,
@@ -58,6 +58,7 @@ function App() {
                     <Route path="/user/profile" element={<ProfilePage />} />
                     <Route path="/user/brands" element={<ProductBrandsPage />} />
                     <Route path="/user/brand" element={<ProductBrandPage />} />
+                    <Route path="/user/brand/:brandId" element={<ProductBrandPage />} />
                     <Route path="/user/products" element={<ProductsPage />} />
                     <Route path="/user/product" element={<ProductPage />} />
                     <Route path="/user/product/:id" element={<ProductPage />} />
