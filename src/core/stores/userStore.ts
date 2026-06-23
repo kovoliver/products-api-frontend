@@ -10,12 +10,14 @@ export const useUserStore = create<UserStoreType>((set, get) => ({
     authLoading: true,
     fetching: false,
     submitting: false,
+    csrfToken:"",
 
-    login: (userData) => {
+    login: async (userData) => {
         set({
             user: userData,
             isAuthenticated: true,
             authLoading: false,
+            csrfToken: await get().getCsrfToken()
         });
     },
 
@@ -37,6 +39,7 @@ export const useUserStore = create<UserStoreType>((set, get) => ({
             set({
                 user: null,
                 isAuthenticated: false,
+                csrfToken:null
             });
         } catch (err) {
             console.error("Logout was unsuccessful:", err);
@@ -49,6 +52,7 @@ export const useUserStore = create<UserStoreType>((set, get) => ({
         set({
             user: null,
             isAuthenticated: false,
+            csrfToken:null
         });
     },
 
@@ -67,6 +71,7 @@ export const useUserStore = create<UserStoreType>((set, get) => ({
             set({
                 user: userData,
                 isAuthenticated: true,
+                csrfToken: await get().getCsrfToken()
             });
         } catch (err:any) {
             const error = err as AxiosError;
@@ -83,6 +88,10 @@ export const useUserStore = create<UserStoreType>((set, get) => ({
         }
     },
 
+    async getCsrfToken() {
+        const response = await api.get("/auth/csrf-token");
+        return response.data?.csrfToken;
+    },
     setAuthLoading: (loading) => set({ authLoading: loading }),
     setFetching: (loading) => set({ fetching: loading }),
     setSubmitting: (loading) => set({ submitting: loading }),

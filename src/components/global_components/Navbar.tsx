@@ -22,6 +22,11 @@ export default function Navbar() {
                             Profile
                         </Link>
                     </li>
+                    <li className={highlightMenu("/user/brands") + " p-2"}>
+                        <Link to="/user/brands">
+                            Brands
+                        </Link>
+                    </li>
                     <li className={highlightMenu("/user/products") + " p-2"}>
                         <Link to="/user/products">
                             Products

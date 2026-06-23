@@ -8,6 +8,7 @@ export interface UserStoreType {
     authLoading: boolean;
     fetching:boolean;
     submitting:boolean;
+    csrfToken:string|null;
     login: (userData: AuthResponse) => void;
     setProfileData: (profileData:ProfileFormData)=>void;
     logout: () => void;
@@ -16,6 +17,7 @@ export interface UserStoreType {
     setFetching: (loading: boolean) => void;
     setSubmitting: (loading: boolean) => void;
     verifyUser:()=>void;
+    getCsrfToken:()=>Promise<string>;
 }
 
 export interface ConfirmationOptions {
@@ -84,7 +86,7 @@ export interface InputProps {
 }
 
 export interface SelectProps extends Omit<InputProps, "type"|"placeholder"> {
-    options:string[]|number[]|{id:number|string, value:string}[];
+    options:string[]|number[]|{id:number|string, value:string}[]|any[];
 }
 
 export interface TagInputProps extends Omit<InputProps, "type"|"value"> {

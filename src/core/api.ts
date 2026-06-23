@@ -1,5 +1,4 @@
 import axios, { type AxiosInstance } from "axios";
-import Cookies from "js-cookie";
 import { useUserStore } from "./stores/userStore";
 
 const api: AxiosInstance = axios.create({
@@ -36,11 +35,8 @@ api.interceptors.request.use(
     (config) => {
         handleLoadingState(config.method, true);
 
-        const csrfToken = Cookies.get('_csrf');
-
-        if (csrfToken && config.headers) {
-            config.headers['X-CSRF-Token'] = csrfToken;
-        }
+        config.headers['x-csrf-token'] = useUserStore.getState().csrfToken;
+        console.log(config.headers['x-csrf-token']);
         
         return config;
     },

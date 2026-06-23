@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from "react";
 import type { ProductFormData } from "../../core/types";
 import { InputMain } from "../../components/ui/Inputs";
 import { BoxSecondary } from "../../components/ui/Boxes";
-import TagInput from "../../components/ui/TagInput";
 import ProductsService from "../../app/ProductsService";
 import { useNavigate, useParams } from "react-router-dom";
 import { ButtonMain } from "../../components/ui/Buttons";
@@ -26,7 +25,7 @@ export default function ProductPage() {
         discountPercentage: 0,
         tags: []
     });
-    const [errors, setErrors] = useState<Record<keyof ProductFormData,any>>({
+    const [errors, setErrors] = useState<Record<keyof ProductFormData, any>>({
         brandId: 0,
         title: "",
         description: "",

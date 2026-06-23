@@ -1,5 +1,5 @@
 import type { ObjectSchema } from 'joi';
-import type { ChangeEvent, Dispatch, SetStateAction } from 'react';
+import { useEffect, useState, type ChangeEvent, type Dispatch, type SetStateAction } from 'react';
 import isEqual from "fast-deep-equal";
 
 export function getValueByKey(object: Record<string, any>, key: string, context: string): string {
@@ -120,4 +120,18 @@ export function onlyChangedKeys<T extends Record<string, any>>(a: T, b: T): Part
     }
 
     return result;
+}
+
+export function useDebounce(val:string, delay:number = 500) {
+    const [dKeyword, setDKeyword] = useState(val);
+
+    useEffect(()=> {
+        const timer = setTimeout(()=> {
+            setDKeyword(val);
+        }, delay);
+
+        return ()=> clearTimeout(timer);
+    }, [val]);
+
+    return dKeyword;
 }

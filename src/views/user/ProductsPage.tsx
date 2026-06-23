@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import { BoxAccent, BoxSecondary } from "../../components/ui/Boxes";
 import ProductsService from "../../app/ProductsService";
-import type { Product, ProductResponse } from "../../core/types";
+import type { Product, ProductsResponse } from "../../core/types";
 import { Link } from "react-router-dom";
 import { ButtonDanger, ButtonMain } from "../../components/ui/Buttons";
 import type { ConfirmationOptions } from "../../core/interfaces";
@@ -43,7 +43,7 @@ export default function ProductsPage() {
         setLoading(true);
 
         try {
-            const response: ProductResponse = await ps.getProducts(limit, currentSkip, currentKeyword);
+            const response: ProductsResponse = await ps.getProducts(limit, currentSkip, currentKeyword);
             setTotal(response.total);
             
             if (currentSkip === 0) {
