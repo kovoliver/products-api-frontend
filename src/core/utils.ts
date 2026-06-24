@@ -1,6 +1,8 @@
 import type { ObjectSchema } from 'joi';
 import { useEffect, useState, type ChangeEvent, type Dispatch, type SetStateAction } from 'react';
 import isEqual from "fast-deep-equal";
+import type { ConfirmationOptions } from './interfaces';
+import { useConfirmationStore } from './stores/confirmationStore';
 
 export function getValueByKey(object: Record<string, any>, key: string, context: string): string {
     if (!(key in object)) {
@@ -114,7 +116,7 @@ export function onlyChangedKeys<T extends Record<string, any>>(a: T, b: T): Part
     const result: Partial<T> = {};
 
     for (const key of Object.keys(b) as (keyof T)[]) {
-         if (!isEqual(a[key], b[key])) {
+        if (!isEqual(a[key], b[key])) {
             result[key] = b[key];
         }
     }
@@ -122,15 +124,15 @@ export function onlyChangedKeys<T extends Record<string, any>>(a: T, b: T): Part
     return result;
 }
 
-export function useDebounce(val:string, delay:number = 500) {
+export function useDebounce(val: string, delay: number = 500) {
     const [dKeyword, setDKeyword] = useState(val);
 
-    useEffect(()=> {
-        const timer = setTimeout(()=> {
+    useEffect(() => {
+        const timer = setTimeout(() => {
             setDKeyword(val);
         }, delay);
 
-        return ()=> clearTimeout(timer);
+        return () => clearTimeout(timer);
     }, [val]);
 
     return dKeyword;
@@ -156,3 +158,19 @@ export function toLocaleDateTimeString(
 
     return date.toLocaleString("hu-HU");
 }
+
+export const deleteConfirm = async (id: number, title: string, msg:string, deleteCb:(id:number)=>any) => {
+    const confOptions: ConfirmationOptions = {
+        title: title,
+        message: msg,
+        messageType: "info",
+        confirmText: "delete",
+        confirmVariant: "danger",
+        cancelVariant: "main",
+        confirmIcon: "check",
+        cancelIcon: "xmark",
+        onConfirm: () => { deleteCb(id) }
+    } as const;
+
+    useConfirmationStore.getState().askConfirmation(confOptions);
+};

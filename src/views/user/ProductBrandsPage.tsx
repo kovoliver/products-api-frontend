@@ -1,20 +1,20 @@
 import { useEffect, useMemo, useState } from "react";
-import { useConfirmationStore } from "../../core/stores/confirmationStore";
 import { useNotificationStore } from "../../core/stores/notificationStore";
 import type { BrandSearchParams, ProductBrand } from "../../core/types";
-import { BoxAccent, BoxSecondary } from "../../components/ui/Boxes";
+import { BoxAccent } from "../../components/ui/Boxes";
 import { InputMain } from "../../components/ui/Inputs";
 import { SelectMain } from "../../components/ui/Selects";
 import { Link } from "react-router-dom";
 import { ButtonDanger, ButtonMain } from "../../components/ui/Buttons";
 import ProductBrandService from "../../app/ProductBrandService";
-import { toLocalDateString, toLocaleDateTimeString } from "../../core/utils";
+import { deleteConfirm, toLocaleDateTimeString } from "../../core/utils";
+import { useUserStore } from "../../core/stores/userStore";
 
 export default function ProductBrandsPage() {
     const setMessage = useNotificationStore(state => state.setMessage);
+    const submitting = useUserStore(state => state.submitting);
     const pbs = useMemo(() => new ProductBrandService(), []);
     const setMessageType = useNotificationStore(state => state.setMessageType);
-    const askConfirmation = useConfirmationStore(state => state.askConfirmation);
     const [brands, setBrands] = useState<ProductBrand[]>([]);
     const [total, setTotal] = useState<number>(0);
     const [searchParams, setSearchParams] = useState<BrandSearchParams>({
@@ -29,6 +29,16 @@ export default function ProductBrandsPage() {
             const response = await pbs.search(searchParams);
             setBrands(response.brands);
             setTotal(response.total);
+        } catch (err: unknown) {
+            setMessage(err);
+            setMessageType("danger");
+        }
+    };
+
+    const deleteBrand = async (brandId:number)=> {
+        try {
+            await pbs.deleteBrand(brandId);
+            setBrands(brands.filter(b=>b.brandId !== brandId));
         } catch (err: unknown) {
             setMessage(err);
             setMessageType("danger");
@@ -109,6 +119,14 @@ export default function ProductBrandsPage() {
                                             text="Delete"
                                             icon="trash"
                                             size="sm"
+                                            onClick={()=>deleteConfirm(
+                                                b.brandId,
+                                                "Brand deletion",
+                                                `Do you want to delete the following brand: ${b.name}?`,
+                                                deleteBrand
+                                            )}
+                                            isLoading={submitting}
+                                            disabled={submitting}
                                         />
                                     </div>
                                 </div>

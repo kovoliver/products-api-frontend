@@ -30,6 +30,10 @@ export default function ProductBrandPage() {
 
     const addBrand = async () => {
         try {
+            if(brandData.description?.length === 0 
+            || brandData.description === null)
+                delete brandData.description;
+
             const errs = validateForm(brandData, brandValidationScheme);
             const isUpdate = brandId ? true : false;
 
@@ -43,7 +47,7 @@ export default function ProductBrandPage() {
             setMessage(`You have successfully ${isUpdate ? 'updated' : 'added'} your product!`);
             setMessageType("success");
 
-            if (!isUpdate) navigate(`/product/${brand.brandId}`);
+            if (!isUpdate) navigate(`/user/brand/${brand.brandId}`);
         } catch (err: any) {
             setMessage(err);
             setMessageType("danger");
