@@ -13,12 +13,12 @@ import { useUserStore } from "../../core/stores/userStore";
 export default function ProductBrandsPage() {
     const setMessage = useNotificationStore(state => state.setMessage);
     const submitting = useUserStore(state => state.submitting);
-    const fetching = useUserStore(state => state.fetching);
     const pbs = useMemo(() => new ProductBrandService(), []);
     const setMessageType = useNotificationStore(state => state.setMessageType);
     const [brands, setBrands] = useState<ProductBrand[]>([]);
     const [total, setTotal] = useState<number>(0);
     const [hasMore, setHasMore] = useState(false);
+    const [loading, setLoading] = useState(false);
     const [searchParams, setSearchParams] = useState<BrandSearchParams>({
         limit: 12,
         skip: 0,
@@ -30,12 +30,15 @@ export default function ProductBrandsPage() {
     const observerRef = useRef<HTMLDivElement | null>(null);
 
     const searchBrands = useCallback(async (currentSearchParams: BrandSearchParams) => {
+        if (loading) return;
+        setLoading(true);
+
         try {
             const response = await pbs.search(currentSearchParams);
+            setTotal(response.total);
 
             if (currentSearchParams.skip === 0) {
                 setBrands(response.brands);
-                setTotal(response.total);
 
                 setHasMore(response.brands.length < response.total);
             } else {
@@ -48,6 +51,8 @@ export default function ProductBrandsPage() {
         } catch (err: unknown) {
             setMessage(err);
             setMessageType("danger");
+        } finally {
+            setLoading(false);
         }
     }, [searchParams.limit]);
 
@@ -62,15 +67,30 @@ export default function ProductBrandsPage() {
     };
 
     useEffect(() => {
+        if (searchParams.skip === 0) return;
+
         searchBrands(searchParams);
-    }, [dName, searchParams.limit, searchParams.orderBy, searchParams.skip]);
+    }, [searchParams.skip]);
 
     useEffect(() => {
-        if (fetching || !hasMore) return;
+        const sp = {
+            limit: searchParams.limit,
+            skip: 0,
+            orderBy: searchParams.orderBy,
+            name: dName
+        };
+
+        setSearchParams(sp);
+
+        searchBrands(sp);
+    }, [searchParams.limit, searchParams.orderBy, dName]);
+
+    useEffect(() => {
+        if (loading || !hasMore) return;
 
         const observer = new IntersectionObserver(
             (entries) => {
-                if (entries[0].isIntersecting && !fetching && hasMore) {
+                if (entries[0].isIntersecting && !loading && hasMore) {
                     setSearchParams({ ...searchParams, skip: searchParams.skip + searchParams.limit });
                 }
             },
@@ -88,7 +108,7 @@ export default function ProductBrandsPage() {
                 observer.unobserve(currentTarget);
             }
         };
-    }, [fetching, hasMore, searchParams.limit]);
+    }, [loading, hasMore]);
 
     return (
         <div className="min-h-full">
@@ -137,55 +157,58 @@ export default function ProductBrandsPage() {
                 <h4 className="text-xl text-primary text-center">{total} brands found</h4>
             </div>
 
-            <div className="grid grid-cols-12 gap-2 h-full">
-                {
-                    brands.map(b =>
-                        <div key={b.brandId} className="md:col-span-4 sm:col-span-6 col-span-12 p-2 text-center">
-                            <BoxAccent padding="md" key={b.brandId}>
-                                <b className="block">{b.name}</b>
+            <div className="min-h-screen d-block">
+                <div className="grid grid-cols-12 gap-2">
+                    {
+                        brands.map(b =>
+                            <div key={b.brandId} className="md:col-span-4 sm:col-span-6 col-span-12 p-2 text-center">
+                                <BoxAccent padding="md" key={b.brandId}>
+                                    <b className="block">{b.name}</b>
 
-                                <div className="py-2">
-                                    <span className="block text-sm text-gray-700">created: {toLocaleDateTimeString(b.createdAt)}</span>
-                                    <span className="block text-sm text-gray-700">updated: {toLocaleDateTimeString(b.updatedAt)}</span>
-                                </div>
+                                    <div className="py-2">
+                                        <span className="block text-sm text-gray-700">created: {toLocaleDateTimeString(b.createdAt)}</span>
+                                        <span className="block text-sm text-gray-700">updated: {toLocaleDateTimeString(b.updatedAt)}</span>
+                                    </div>
 
-                                <div className="grid grid-cols-2">
-                                    <div className="col-span-1 flex justify-center">
-                                        <Link to={`/user/brand/${b.brandId}`}>
-                                            <ButtonMain
-                                                text="Open"
-                                                icon="arrow-up-right-from-square"
+                                    <div className="grid grid-cols-2">
+                                        <div className="col-span-1 flex justify-center">
+                                            <Link to={`/user/brand/${b.brandId}`}>
+                                                <ButtonMain
+                                                    text="Open"
+                                                    icon="arrow-up-right-from-square"
+                                                    size="sm"
+                                                />
+                                            </Link>
+                                        </div>
+                                        <div className="col-span-1 flex justify-center">
+                                            <ButtonDanger
+                                                text="Delete"
+                                                icon="trash"
                                                 size="sm"
+                                                onClick={() => deleteConfirm(
+                                                    b.brandId,
+                                                    "Brand deletion",
+                                                    `Do you want to delete the following brand: ${b.name}?`,
+                                                    deleteBrand
+                                                )}
+                                                isLoading={submitting}
+                                                disabled={submitting}
                                             />
-                                        </Link>
+                                        </div>
                                     </div>
-                                    <div className="col-span-1 flex justify-center">
-                                        <ButtonDanger
-                                            text="Delete"
-                                            icon="trash"
-                                            size="sm"
-                                            onClick={() => deleteConfirm(
-                                                b.brandId,
-                                                "Brand deletion",
-                                                `Do you want to delete the following brand: ${b.name}?`,
-                                                deleteBrand
-                                            )}
-                                            isLoading={submitting}
-                                            disabled={submitting}
-                                        />
-                                    </div>
-                                </div>
-                            </BoxAccent>
-                        </div>
-                    )
-                }
+                                </BoxAccent>
+                            </div>
+                        )
+                    }
+                </div>
+
+                {loading && <div className="py-4 font-bold text-center">Loading products...</div>}
+                {!hasMore && <div className="py-4 text-gray-500 text-center">You have loaded all elements.</div>}
+
+                
             </div>
 
-            <div ref={observerRef} style={{ display: (brands?.length > 0 ? 'block' : 'none') }}
-                className="h-10 w-full flex items-center justify-center text-center">
-                {fetching && <div className="py-4 font-bold">Loading products...</div>}
-                {!hasMore && <div className="py-4 text-gray-500">You have loaded all elements.</div>}
-            </div>
+            <div ref={observerRef} style={{ display: (brands?.length > 0 ? 'block' : 'none') }}></div>
         </div>
     );
 }
